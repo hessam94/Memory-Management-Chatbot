@@ -59,6 +59,27 @@ ChatBot::ChatBot(ChatBot &source)
     *_chatLogic = *source._chatLogic;
     std::cout << "COPYING content of instance " << &source << " to instance " << this << std::endl;
 }
+
+
+ChatBot ChatBot::operator=(ChatBot &source)
+{
+    if (this == &source)
+        return *this;
+    _currentNode = new GraphNode(source._currentNode->GetID());
+    *_currentNode = *source._currentNode;
+
+    _rootNode = new GraphNode(source._rootNode->GetID());
+    *_rootNode = *source._rootNode;
+
+    _image = new wxBitmap();
+    *_image = *source._image;
+
+    _chatLogic = new ChatLogic();
+    *_chatLogic = *source._chatLogic;
+
+    return *this;
+
+}
 ////
 //// EOF STUDENT CODE
 
