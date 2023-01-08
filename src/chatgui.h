@@ -1,7 +1,7 @@
 #ifndef CHATGUI_H_
 #define CHATGUI_H_
 
-#include <wx/wx.h>
+#include </usr/include/wx-3.0/wx/wx.h>
 
 class ChatLogic; // forward declaration
 

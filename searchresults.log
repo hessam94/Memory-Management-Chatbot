@@ -1,0 +1,1169 @@
+commit 9f976213d6ed0e5f9c43bc3ed32b240f195ca9da
+Author: hessam94 <azzurro_94@yahoo.com>
+Date:   Fri Jan 6 16:47:16 2023 -0500
+
+    first commit
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..33b0d3f
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,14 @@
++cmake_minimum_required(VERSION 3.11.3)
++
++set(CMAKE_CXX_STANDARD 17)
++
++project(Membot)
++
++find_package(wxWidgets REQUIRED COMPONENTS core base)
++include(${wxWidgets_USE_FILE})
++
++file(GLOB project_SRCS src/*.cpp)
++
++add_executable(membot ${project_SRCS})
++target_link_libraries(membot ${wxWidgets_LIBRARIES})
++target_include_directories(membot PRIVATE ${wxWidgets_INCLUDE_DIRS})
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..7a15436
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,28 @@
++# Memory Management Chatbot
++
++
++The ChatBot code creates a dialogue where users can ask questions about some aspects of memory management in C++. After the knowledge base of the chatbot has been loaded from a text file, a knowledge graph representation is created in computer memory, where chatbot answers represent the graph nodes and user queries represent the graph edges. After a user query has been sent to the chatbot, the Levenshtein distance is used to identify the most probable answer. The code is fully functional as-is and uses raw pointers to represent the knowledge graph and interconnections between objects throughout the project.
++
++## Dependencies for Running Locally
++* cmake >= 3.11
++  * All OSes: [click here for installation instructions](https://cmake.org/install/)
++* make >= 4.1 (Linux, Mac), 3.81 (Windows)
++  * Linux: make is installed by default on most Linux distros
++  * Mac: [install Xcode command line tools to get make](https://developer.apple.com/xcode/features/)
++  * Windows: [Click here for installation instructions](http://gnuwin32.sourceforge.net/packages/make.htm)
++* gcc/g++ >= 5.4
++  * Linux: gcc / g++ is installed by default on most Linux distros
++  * Mac: same deal as make - [install Xcode command line tools](https://developer.apple.com/xcode/features/)
++  * Windows: recommend using [MinGW](http://www.mingw.org/)
++* wxWidgets >= 3.0
++  * Linux: `sudo apt-get install libwxgtk3.0-gtk3-dev libwxgtk3.0-gtk3-0v5`. If you are facing unmet dependency issues, refer to the [official page](https://wiki.codelite.org/pmwiki.php/Main/WxWidgets30Binaries#toc2) for installing the unmet dependencies.
++  * Mac: There is a [homebrew installation available](https://formulae.brew.sh/formula/wxmac).
++  * Installation instructions can be found [here](https://wiki.wxwidgets.org/Install). Some version numbers may need to be changed in instructions to install v3.0 or greater.
++
++## Basic Build Instructions
++
++1. Clone this repo.
++2. Make a build directory in the top level directory: `mkdir build && cd build`
++3. Compile: `cmake .. && make`
++4. Run it: `./membot`.
++
+diff --git a/images/chatbot.png b/images/chatbot.png
+new file mode 100644
+index 0000000..7acea40
+Binary files /dev/null and b/images/chatbot.png differ
+diff --git a/images/sf_bridge.jpg b/images/sf_bridge.jpg
+new file mode 100644
+index 0000000..824102b
+Binary files /dev/null and b/images/sf_bridge.jpg differ
+diff --git a/images/sf_bridge_inner.jpg b/images/sf_bridge_inner.jpg
+new file mode 100644
+index 0000000..f91cde3
+Binary files /dev/null and b/images/sf_bridge_inner.jpg differ
+diff --git a/images/user.png b/images/user.png
+new file mode 100644
+index 0000000..84db1ee
+Binary files /dev/null and b/images/user.png differ
+diff --git a/src/answergraph.txt b/src/answergraph.txt
+new file mode 100644
+index 0000000..11c4d1c
+--- /dev/null
++++ b/src/answergraph.txt
+@@ -0,0 +1,29 @@
++
++// define all graph nodes
++<TYPE:NODE><ID:0><ANSWER:Welcome! My name is MemBot. You can ask me about things related to memory management in C++. Possible topics are 'pointers' and 'the C++ memory model'. What would you like to talk about?>
++
++<TYPE:NODE><ID:1><ANSWER:Great! Let's talk about pointers. In computer science, a pointer is a special value whose meaning is a memory address. This address can contain either data, such as variables or objects, but also program codes (instructions). By dereferencing the pointer it is possible to access the data or the code. Among other things, pointers are used to manage dynamic memory. Other topics around pointers you can ask about are 'smart pointers' and 'nullptr'>
++
++<TYPE:NODE><ID:2><ANSWER:When instantiating variables, programmers can choose wether to do this on the heap, on the stack or in static memory. Do you want to know more about those two concepts? Simply ask me about 'heap', 'stack' or 'static'.>
++
++<TYPE:NODE><ID:3><ANSWER:A smart pointer is an object that behaves like a pointer, i.e. it must support pointer operations such as dereferencing or indirect access. In addition to these properties, the smart pointer handles resources better. In concrete terms, this means that it takes care not to cause a memory leak. A smart pointer exists in various flavors, which are unique_ptr, shared_ptr and weak_ptr. There are no more topics in this section, starting over!>
++
++<TYPE:NODE><ID:4><ANSWER:The value nullptr can be assigned to pointers of any type. This turns the pointer into a null pointer that does not point to a memory location. The nullptr keyword can be used to test if a pointer or handle reference is null before the reference is used. There are no more topics in this section, starting over!>
++
++<TYPE:NODE><ID:5><ANSWER:Local variables declared as part of a function are stored on the stack. Also, the stack is the place where function parameters are stored. Further, the stack is used for storing the return address of the calling functions, and it keeps the register contents and return address when an interrupt service routine is called. -- There are no more topics in this section, starting over!>
++
++<TYPE:NODE><ID:6><ANSWER:Heap memory, also known as dynamic memory, is an alternative to local stack memory. Local memory is allocated automatically on function call and it is deallocated automatically when a function exits. Heap memory is different. The programmer explicitly requests the allocation of a memory block of a particular size, and the block continues to be allocated until the programmer explicitly requests that it be deallocated. -- There are no more topics in this section, starting over!>
++
++<TYPE:NODE><ID:7><ANSWER:Static memory persists throughout the entire life of the program, and is usually used to store things like global variables, or variables created with the static clause. -- There are no more topics in this section, starting over!>
++
++
++// connect nodes with edges
++<TYPE:EDGE><ID:0><PARENT:0><CHILD:1><KEYWORD:pointer><KEYWORD:smart pointer>
++<TYPE:EDGE><ID:1><PARENT:0><CHILD:2><KEYWORD:memory model><KEYWORD:heap><KEYWORD:stack>
++
++<TYPE:EDGE><ID:2><PARENT:1><CHILD:3><KEYWORD:unique pointer><KEYWORD:shared pointer><KEYWORD:weak pointer>
++<TYPE:EDGE><ID:3><PARENT:1><CHILD:4><KEYWORD:NULL><KEYWORD:null pointer><KEYWORD:nullptr>
++
++<TYPE:EDGE><ID:4><PARENT:2><CHILD:5><KEYWORD:stack><KEYWORD:stack memory><KEYWORD:local variable storage>
++<TYPE:EDGE><ID:5><PARENT:2><CHILD:6><KEYWORD:heap><KEYWORD:heap memory><KEYWORD:dynamic storage>
++<TYPE:EDGE><ID:6><PARENT:2><CHILD:7><KEYWORD:static><KEYWORD:static memory><KEYWORD:global variable storage>
+\ No newline at end of file
+diff --git a/src/chatbot.cpp b/src/chatbot.cpp
+new file mode 100644
+index 0000000..41d1f0c
+--- /dev/null
++++ b/src/chatbot.cpp
+@@ -0,0 +1,148 @@
++#include <iostream>
++#include <random>
++#include <algorithm>
++#include <ctime>
++
++#include "chatlogic.h"
++#include "graphnode.h"
++#include "graphedge.h"
++#include "chatbot.h"
++
++// constructor WITHOUT memory allocation
++ChatBot::ChatBot()
++{
++    // invalidate data handles
++    _image = nullptr;
++    _chatLogic = nullptr;
++    _rootNode = nullptr;
++}
++
++// constructor WITH memory allocation
++ChatBot::ChatBot(std::string filename)
++{
++    std::cout << "ChatBot Constructor" << std::endl;
++    
++    // invalidate data handles
++    _chatLogic = nullptr;
++    _rootNode = nullptr;
++
++    // load image into heap memory
++    _image = new wxBitmap(filename, wxBITMAP_TYPE_PNG);
++}
++
++ChatBot::~ChatBot()
++{
++    std::cout << "ChatBot Destructor" << std::endl;
++
++    // deallocate heap memory
++    if(_image != NULL) // Attention: wxWidgets used NULL and not nullptr
++    {
++        delete _image;
++        _image = NULL;
++    }
++}
++
++//// STUDENT CODE
++////
++
++////
++//// EOF STUDENT CODE
++
++void ChatBot::ReceiveMessageFromUser(std::string message)
++{
++    // loop over all edges and keywords and compute Levenshtein distance to query
++    typedef std::pair<GraphEdge *, int> EdgeDist;
++    std::vector<EdgeDist> levDists; // format is <ptr,levDist>
++
++    for (size_t i = 0; i < _currentNode->GetNumberOfChildEdges(); ++i)
++    {
++        GraphEdge *edge = _currentNode->GetChildEdgeAtIndex(i);
++        for (auto keyword : edge->GetKeywords())
++        {
++            EdgeDist ed{edge, ComputeLevenshteinDistance(keyword, message)};
++            levDists.push_back(ed);
++        }
++    }
++
++    // select best fitting edge to proceed along
++    GraphNode *newNode;
++    if (levDists.size() > 0)
++    {
++        // sort in ascending order of Levenshtein distance (best fit is at the top)
++        std::sort(levDists.begin(), levDists.end(), [](const EdgeDist &a, const EdgeDist &b) { return a.second < b.second; });
++        newNode = levDists.at(0).first->GetChildNode(); // after sorting the best edge is at first position
++    }
++    else
++    {
++        // go back to root node
++        newNode = _rootNode;
++    }
++
++    // tell current node to move chatbot to new node
++    _currentNode->MoveChatbotToNewNode(newNode);
++}
++
++void ChatBot::SetCurrentNode(GraphNode *node)
++{
++    // update pointer to current node
++    _currentNode = node;
++
++    // select a random node answer (if several answers should exist)
++    std::vector<std::string> answers = _currentNode->GetAnswers();
++    std::mt19937 generator(int(std::time(0)));
++    std::uniform_int_distribution<int> dis(0, answers.size() - 1);
++    std::string answer = answers.at(dis(generator));
++
++    // send selected node answer to user
++    _chatLogic->SendMessageToUser(answer);
++}
++
++int ChatBot::ComputeLevenshteinDistance(std::string s1, std::string s2)
++{
++    // convert both strings to upper-case before comparing
++    std::transform(s1.begin(), s1.end(), s1.begin(), ::toupper);
++    std::transform(s2.begin(), s2.end(), s2.begin(), ::toupper);
++
++    // compute Levenshtein distance measure between both strings
++    const size_t m(s1.size());
++    const size_t n(s2.size());
++
++    if (m == 0)
++        return n;
++    if (n == 0)
++        return m;
++
++    size_t *costs = new size_t[n + 1];
++
++    for (size_t k = 0; k <= n; k++)
++        costs[k] = k;
++
++    size_t i = 0;
++    for (std::string::const_iterator it1 = s1.begin(); it1 != s1.end(); ++it1, ++i)
++    {
++        costs[0] = i + 1;
++        size_t corner = i;
++
++        size_t j = 0;
++        for (std::string::const_iterator it2 = s2.begin(); it2 != s2.end(); ++it2, ++j)
++        {
++            size_t upper = costs[j + 1];
++            if (*it1 == *it2)
++            {
++                costs[j + 1] = corner;
++            }
++            else
++            {
++                size_t t(upper < corner ? upper : corner);
++                costs[j + 1] = (costs[j] < t ? costs[j] : t) + 1;
++            }
++
++            corner = upper;
++        }
++    }
++
++    int result = costs[n];
++    delete[] costs;
++
++    return result;
++}
+\ No newline at end of file
+diff --git a/src/chatbot.h b/src/chatbot.h
+new file mode 100644
+index 0000000..0367a93
+--- /dev/null
++++ b/src/chatbot.h
+@@ -0,0 +1,47 @@
++#ifndef CHATBOT_H_
++#define CHATBOT_H_
++
++#include <wx/bitmap.h>
++#include <string>
++
++class GraphNode; // forward declaration
++class ChatLogic; // forward declaration
++
++class ChatBot
++{
++private:
++    // data handles (owned)
++    wxBitmap *_image; // avatar image
++
++    // data handles (not owned)
++    GraphNode *_currentNode;
++    GraphNode *_rootNode;
++    ChatLogic *_chatLogic;
++
++    // proprietary functions
++    int ComputeLevenshteinDistance(std::string s1, std::string s2);
++
++public:
++    // constructors / destructors
++    ChatBot();                     // constructor WITHOUT memory allocation
++    ChatBot(std::string filename); // constructor WITH memory allocation
++    ~ChatBot();
++
++    //// STUDENT CODE
++    ////
++
++    ////
++    //// EOF STUDENT CODE
++
++    // getters / setters
++    void SetCurrentNode(GraphNode *node);
++    void SetRootNode(GraphNode *rootNode) { _rootNode = rootNode; }
++    void SetChatLogicHandle(ChatLogic *chatLogic) { _chatLogic = chatLogic; }
++    ChatLogic* GetChatLogicHandle() { return _chatLogic; }
++    wxBitmap *GetImageHandle() { return _image; }
++
++    // communication
++    void ReceiveMessageFromUser(std::string message);
++};
++
++#endif /* CHATBOT_H_ */
+diff --git a/src/chatgui.cpp b/src/chatgui.cpp
+new file mode 100644
+index 0000000..6637e56
+--- /dev/null
++++ b/src/chatgui.cpp
+@@ -0,0 +1,216 @@
++#include <wx/filename.h>
++#include <wx/colour.h>
++#include <wx/image.h>
++#include <string>
++#include "chatbot.h"
++#include "chatlogic.h"
++#include "chatgui.h"
++
++// size of chatbot window
++const int width = 414;
++const int height = 736;
++
++// wxWidgets APP
++IMPLEMENT_APP(ChatBotApp);
++
++std::string dataPath = "../";
++std::string imgBasePath = dataPath + "images/";
++
++bool ChatBotApp::OnInit()
++{
++    // create window with name and show it
++    ChatBotFrame *chatBotFrame = new ChatBotFrame(wxT("Udacity ChatBot"));
++    chatBotFrame->Show(true);
++
++    return true;
++}
++
++// wxWidgets FRAME
++ChatBotFrame::ChatBotFrame(const wxString &title) : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height))
++{
++    // create panel with background image
++    ChatBotFrameImagePanel *ctrlPanel = new ChatBotFrameImagePanel(this);
++
++    // create controls and assign them to control panel
++    _panelDialog = new ChatBotPanelDialog(ctrlPanel, wxID_ANY);
++
++    // create text control for user input
++    int idTextXtrl = 1;
++    _userTextCtrl = new wxTextCtrl(ctrlPanel, idTextXtrl, "", wxDefaultPosition, wxSize(width, 50), wxTE_PROCESS_ENTER, wxDefaultValidator, wxTextCtrlNameStr);
++    Connect(idTextXtrl, wxEVT_TEXT_ENTER, wxCommandEventHandler(ChatBotFrame::OnEnter));
++
++    // create vertical sizer for panel alignment and add panels
++    wxBoxSizer *vertBoxSizer = new wxBoxSizer(wxVERTICAL);
++    vertBoxSizer->AddSpacer(90);
++    vertBoxSizer->Add(_panelDialog, 6, wxEXPAND | wxALL, 0);
++    vertBoxSizer->Add(_userTextCtrl, 1, wxEXPAND | wxALL, 5);
++    ctrlPanel->SetSizer(vertBoxSizer);
++
++    // position window in screen center
++    this->Centre();
++}
++
++void ChatBotFrame::OnEnter(wxCommandEvent &WXUNUSED(event))
++{
++    // retrieve text from text control
++    wxString userText = _userTextCtrl->GetLineText(0);
++
++    // add new user text to dialog
++    _panelDialog->AddDialogItem(userText, true);
++
++    // delete text in text control
++    _userTextCtrl->Clear();
++
++    // send user text to chatbot 
++     _panelDialog->GetChatLogicHandle()->SendMessageToChatbot(std::string(userText.mb_str()));
++}
++
++BEGIN_EVENT_TABLE(ChatBotFrameImagePanel, wxPanel)
++EVT_PAINT(ChatBotFrameImagePanel::paintEvent) // catch paint events
++END_EVENT_TABLE()
++
++ChatBotFrameImagePanel::ChatBotFrameImagePanel(wxFrame *parent) : wxPanel(parent)
++{
++}
++
++void ChatBotFrameImagePanel::paintEvent(wxPaintEvent &evt)
++{
++    wxPaintDC dc(this);
++    render(dc);
++}
++
++void ChatBotFrameImagePanel::paintNow()
++{
++    wxClientDC dc(this);
++    render(dc);
++}
++
++void ChatBotFrameImagePanel::render(wxDC &dc)
++{
++    // load backgroud image from file
++    wxString imgFile = imgBasePath + "sf_bridge.jpg";
++    wxImage image;
++    image.LoadFile(imgFile);
++
++    // rescale image to fit window dimensions
++    wxSize sz = this->GetSize();
++    wxImage imgSmall = image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
++    _image = wxBitmap(imgSmall);
++    
++    dc.DrawBitmap(_image, 0, 0, false);
++}
++
++BEGIN_EVENT_TABLE(ChatBotPanelDialog, wxPanel)
++EVT_PAINT(ChatBotPanelDialog::paintEvent) // catch paint events
++END_EVENT_TABLE()
++
++ChatBotPanelDialog::ChatBotPanelDialog(wxWindow *parent, wxWindowID id)
++    : wxScrolledWindow(parent, id)
++{
++    // sizer will take care of determining the needed scroll size
++    _dialogSizer = new wxBoxSizer(wxVERTICAL);
++    this->SetSizer(_dialogSizer);
++
++    // allow for PNG images to be handled
++    wxInitAllImageHandlers();
++
++    //// STUDENT CODE
++    ////
++
++    // create chat logic instance
++    _chatLogic = new ChatLogic(); 
++
++    // pass pointer to chatbot dialog so answers can be displayed in GUI
++    _chatLogic->SetPanelDialogHandle(this);
++
++    // load answer graph from file
++    _chatLogic->LoadAnswerGraphFromFile(dataPath + "src/answergraph.txt");
++
++    ////
++    //// EOF STUDENT CODE
++}
++
++ChatBotPanelDialog::~ChatBotPanelDialog()
++{
++    //// STUDENT CODE
++    ////
++
++    delete _chatLogic;
++
++    ////
++    //// EOF STUDENT CODE
++}
++
++void ChatBotPanelDialog::AddDialogItem(wxString text, bool isFromUser)
++{
++    // add a single dialog element to the sizer
++    ChatBotPanelDialogItem *item = new ChatBotPanelDialogItem(this, text, isFromUser);
++    _dialogSizer->Add(item, 0, wxALL | (isFromUser == true ? wxALIGN_LEFT : wxALIGN_RIGHT), 8);
++    _dialogSizer->Layout();
++
++    // make scrollbar show up
++    this->FitInside(); // ask the sizer about the needed size
++    this->SetScrollRate(5, 5);
++    this->Layout();
++
++    // scroll to bottom to show newest element
++    int dx, dy;
++    this->GetScrollPixelsPerUnit(&dx, &dy);
++    int sy = dy * this->GetScrollLines(wxVERTICAL);
++    this->DoScroll(0, sy);
++}
++
++void ChatBotPanelDialog::PrintChatbotResponse(std::string response)
++{
++    // convert string into wxString and add dialog element
++    wxString botText(response.c_str(), wxConvUTF8);
++    AddDialogItem(botText, false);
++}
++
++void ChatBotPanelDialog::paintEvent(wxPaintEvent &evt)
++{
++    wxPaintDC dc(this);
++    render(dc);
++}
++
++void ChatBotPanelDialog::paintNow()
++{
++    wxClientDC dc(this);
++    render(dc);
++}
++
++void ChatBotPanelDialog::render(wxDC &dc)
++{
++    wxImage image;
++    image.LoadFile(imgBasePath + "sf_bridge_inner.jpg");
++
++    wxSize sz = this->GetSize();
++    wxImage imgSmall = image.Rescale(sz.GetWidth(), sz.GetHeight(), wxIMAGE_QUALITY_HIGH);
++
++    _image = wxBitmap(imgSmall);
++    dc.DrawBitmap(_image, 0, 0, false);
++}
++
++ChatBotPanelDialogItem::ChatBotPanelDialogItem(wxPanel *parent, wxString text, bool isFromUser)
++    : wxPanel(parent, -1, wxPoint(-1, -1), wxSize(-1, -1), wxBORDER_NONE)
++{
++    // retrieve image from chatbot
++    wxBitmap *bitmap = isFromUser == true ? nullptr : ((ChatBotPanelDialog*)parent)->GetChatLogicHandle()->GetImageFromChatbot(); 
++
++    // create image and text
++    _chatBotImg = new wxStaticBitmap(this, wxID_ANY, (isFromUser ? wxBitmap(imgBasePath + "user.png", wxBITMAP_TYPE_PNG) : *bitmap), wxPoint(-1, -1), wxSize(-1, -1));
++    _chatBotTxt = new wxStaticText(this, wxID_ANY, text, wxPoint(-1, -1), wxSize(150, -1), wxALIGN_CENTRE | wxBORDER_NONE);
++    _chatBotTxt->SetForegroundColour(isFromUser == true ? wxColor(*wxBLACK) : wxColor(*wxWHITE));
++
++    // create sizer and add elements
++    wxBoxSizer *horzBoxSizer = new wxBoxSizer(wxHORIZONTAL);
++    horzBoxSizer->Add(_chatBotTxt, 8, wxEXPAND | wxALL, 1);
++    horzBoxSizer->Add(_chatBotImg, 2, wxEXPAND | wxALL, 1);
++    this->SetSizer(horzBoxSizer);
++
++    // wrap text after 150 pixels
++    _chatBotTxt->Wrap(150);
++
++    // set background color
++    this->SetBackgroundColour((isFromUser == true ? wxT("YELLOW") : wxT("BLUE")));
++}
+diff --git a/src/chatgui.h b/src/chatgui.h
+new file mode 100644
+index 0000000..503c597
+--- /dev/null
++++ b/src/chatgui.h
+@@ -0,0 +1,99 @@
++#ifndef CHATGUI_H_
++#define CHATGUI_H_
++
++#include <wx/wx.h>
++
++class ChatLogic; // forward declaration
++
++// middle part of the window containing the dialog between user and chatbot
++class ChatBotPanelDialog : public wxScrolledWindow
++{
++private:
++    // control elements
++    wxBoxSizer *_dialogSizer;
++    wxBitmap _image;
++
++    //// STUDENT CODE
++    ////
++
++    ChatLogic *_chatLogic;
++
++    ////
++    //// EOF STUDENT CODE
++
++public:
++    // constructor / destructor
++    ChatBotPanelDialog(wxWindow *parent, wxWindowID id);
++    ~ChatBotPanelDialog();
++
++    // getter / setter
++    ChatLogic *GetChatLogicHandle() { return _chatLogic; }
++
++    // events
++    void paintEvent(wxPaintEvent &evt);
++    void paintNow();
++    void render(wxDC &dc);
++
++    // proprietary functions
++    void AddDialogItem(wxString text, bool isFromUser = true);
++    void PrintChatbotResponse(std::string response);
++
++    DECLARE_EVENT_TABLE()
++};
++
++// dialog item shown in ChatBotPanelDialog
++class ChatBotPanelDialogItem : public wxPanel
++{
++private:
++    // control elements
++    wxStaticBitmap *_chatBotImg;
++    wxStaticText *_chatBotTxt;
++
++public:
++    // constructor / destructor
++    ChatBotPanelDialogItem(wxPanel *parent, wxString text, bool isFromUser);
++};
++
++// frame containing all control elements
++class ChatBotFrame : public wxFrame
++{
++private:
++    // control elements
++    ChatBotPanelDialog *_panelDialog;
++    wxTextCtrl *_userTextCtrl;
++
++    // events
++    void OnEnter(wxCommandEvent &WXUNUSED(event));
++
++public:
++    // constructor / desctructor
++    ChatBotFrame(const wxString &title);
++};
++
++// control panel for background image display
++class ChatBotFrameImagePanel : public wxPanel
++{
++    // control elements
++    wxBitmap _image;
++
++public:
++    // constructor / desctructor
++    ChatBotFrameImagePanel(wxFrame *parent);
++
++    // events
++    void paintEvent(wxPaintEvent &evt);
++    void paintNow();
++    void render(wxDC &dc);
++
++    DECLARE_EVENT_TABLE()
++};
++
++// wxWidgets app that hides main()
++class ChatBotApp : public wxApp
++{
++public:
++    // events
++    virtual bool OnInit();
++};
++
++#endif /* CHATGUI_H_ */
+diff --git a/src/chatlogic.cpp b/src/chatlogic.cpp
+new file mode 100644
+index 0000000..79c58ef
+--- /dev/null
++++ b/src/chatlogic.cpp
+@@ -0,0 +1,249 @@
++#include <fstream>
++#include <sstream>
++#include <iostream>
++#include <vector>
++#include <iterator>
++#include <tuple>
++#include <algorithm>
++
++#include "graphedge.h"
++#include "graphnode.h"
++#include "chatbot.h"
++#include "chatlogic.h"
++
++
++ChatLogic::ChatLogic()
++{
++    //// STUDENT CODE
++    ////
++
++    // create instance of chatbot
++    _chatBot = new ChatBot("../images/chatbot.png");
++
++    // add pointer to chatlogic so that chatbot answers can be passed on to the GUI
++    _chatBot->SetChatLogicHandle(this);
++
++    ////
++    //// EOF STUDENT CODE
++}
++
++ChatLogic::~ChatLogic()
++{
++    //// STUDENT CODE
++    ////
++
++    // delete chatbot instance
++    delete _chatBot;
++
++    // delete all nodes
++    for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
++    {
++        delete *it;
++    }
++
++    // delete all edges
++    for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
++    {
++        delete *it;
++    }
++
++    ////
++    //// EOF STUDENT CODE
++}
++
++template <typename T>
++void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist &tokens, T &element)
++{
++    // find all occurences for current node
++    auto token = tokens.begin();
++    while (true)
++    {
++        token = std::find_if(token, tokens.end(), [&tokenID](const std::pair<std::string, std::string> &pair) { return pair.first == tokenID;; });
++        if (token != tokens.end())
++        {
++            element.AddToken(token->second); // add new keyword to edge
++            token++;                         // increment iterator to next element
++        }
++        else
++        {
++            break; // quit infinite while-loop
++        }
++    }
++}
++
++void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
++{
++    // load file with answer graph elements
++    std::ifstream file(filename);
++
++    // check for file availability and process it line by line
++    if (file)
++    {
++        // loop over all lines in the file
++        std::string lineStr;
++        while (getline(file, lineStr))
++        {
++            // extract all tokens from current line
++            tokenlist tokens;
++            while (lineStr.size() > 0)
++            {
++                // extract next token
++                int posTokenFront = lineStr.find("<");
++                int posTokenBack = lineStr.find(">");
++                if (posTokenFront < 0 || posTokenBack < 0)
++                    break; // quit loop if no complete token has been found
++                std::string tokenStr = lineStr.substr(posTokenFront + 1, posTokenBack - 1);
++
++                // extract token type and info
++                int posTokenInfo = tokenStr.find(":");
++                if (posTokenInfo != std::string::npos)
++                {
++                    std::string tokenType = tokenStr.substr(0, posTokenInfo);
++                    std::string tokenInfo = tokenStr.substr(posTokenInfo + 1, tokenStr.size() - 1);
++
++                    // add token to vector
++                    tokens.push_back(std::make_pair(tokenType, tokenInfo));
++                }
++
++                // remove token from current line
++                lineStr = lineStr.substr(posTokenBack + 1, lineStr.size());
++            }
++
++            // process tokens for current line
++            auto type = std::find_if(tokens.begin(), tokens.end(), [](const std::pair<std::string, std::string> &pair) { return pair.first == "TYPE"; });
++            if (type != tokens.end())
++            {
++                // check for id
++                auto idToken = std::find_if(tokens.begin(), tokens.end(), [](const std::pair<std::string, std::string> &pair) { return pair.first == "ID"; });
++                if (idToken != tokens.end())
++                {
++                    // extract id from token
++                    int id = std::stoi(idToken->second);
++
++                    // node-based processing
++                    if (type->second == "NODE")
++                    {
++                        //// STUDENT CODE
++                        ////
++
++                        // check if node with this ID exists already
++                        auto newNode = std::find_if(_nodes.begin(), _nodes.end(), [&id](GraphNode *node) { return node->GetID() == id; });
++
++                        // create new element if ID does not yet exist
++                        if (newNode == _nodes.end())
++                        {
++                            _nodes.emplace_back(new GraphNode(id));
++                            newNode = _nodes.end() - 1; // get iterator to last element
++
++                            // add all answers to current node
++                            AddAllTokensToElement("ANSWER", tokens, **newNode);
++                        }
++
++                        ////
++                        //// EOF STUDENT CODE
++                    }
++
++                    // edge-based processing
++                    if (type->second == "EDGE")
++                    {
++                        //// STUDENT CODE
++                        ////
++
++                        // find tokens for incoming (parent) and outgoing (child) node
++                        auto parentToken = std::find_if(tokens.begin(), tokens.end(), [](const std::pair<std::string, std::string> &pair) { return pair.first == "PARENT"; });
++                        auto childToken = std::find_if(tokens.begin(), tokens.end(), [](const std::pair<std::string, std::string> &pair) { return pair.first == "CHILD"; });
++
++                        if (parentToken != tokens.end() && childToken != tokens.end())
++                        {
++                            // get iterator on incoming and outgoing node via ID search
++                            auto parentNode = std::find_if(_nodes.begin(), _nodes.end(), [&parentToken](GraphNode *node) { return node->GetID() == std::stoi(parentToken->second); });
++                            auto childNode = std::find_if(_nodes.begin(), _nodes.end(), [&childToken](GraphNode *node) { return node->GetID() == std::stoi(childToken->second); });
++
++                            // create new edge
++                            GraphEdge *edge = new GraphEdge(id);
++                            edge->SetChildNode(*childNode);
++                            edge->SetParentNode(*parentNode);
++                            _edges.push_back(edge);
++
++                            // find all keywords for current node
++                            AddAllTokensToElement("KEYWORD", tokens, *edge);
++
++                            // store reference in child node and parent node
++                            (*childNode)->AddEdgeToParentNode(edge);
++                            (*parentNode)->AddEdgeToChildNode(edge);
++                        }
++
++                        ////
++                        //// EOF STUDENT CODE
++                    }
++                }
++                else
++                {
++                    std::cout << "Error: ID missing. Line is ignored!" << std::endl;
++                }
++            }
++        } // eof loop over all lines in the file
++
++        file.close();
++
++    } // eof check for file availability
++    else
++    {
++        std::cout << "File could not be opened!" << std::endl;
++        return;
++    }
++
++    //// STUDENT CODE
++    ////
++
++    // identify root node
++    GraphNode *rootNode = nullptr;
++    for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
++    {
++        // search for nodes which have no incoming edges
++        if ((*it)->GetNumberOfParents() == 0)
++        {
++
++            if (rootNode == nullptr)
++            {
++                rootNode = *it; // assign current node to root
++            }
++            else
++            {
++                std::cout << "ERROR : Multiple root nodes detected" << std::endl;
++            }
++        }
++    }
++
++    // add chatbot to graph root node
++    _chatBot->SetRootNode(rootNode);
++    rootNode->MoveChatbotHere(_chatBot);
++    
++    ////
++    //// EOF STUDENT CODE
++}
++
++void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog *panelDialog)
++{
++    _panelDialog = panelDialog;
++}
++
++void ChatLogic::SetChatbotHandle(ChatBot *chatbot)
++{
++    _chatBot = chatbot;
++}
++
++void ChatLogic::SendMessageToChatbot(std::string message)
++{
++    _chatBot->ReceiveMessageFromUser(message);
++}
++
++void ChatLogic::SendMessageToUser(std::string message)
++{
++    _panelDialog->PrintChatbotResponse(message);
++}
++
++wxBitmap *ChatLogic::GetImageFromChatbot()
++{
++    return _chatBot->GetImageHandle();
++}
+diff --git a/src/chatlogic.h b/src/chatlogic.h
+new file mode 100644
+index 0000000..e70b071
+--- /dev/null
++++ b/src/chatlogic.h
+@@ -0,0 +1,54 @@
++#ifndef CHATLOGIC_H_
++#define CHATLOGIC_H_
++
++#include <vector>
++#include <string>
++#include "chatgui.h"
++
++// forward declarations
++class ChatBot;
++class GraphEdge;
++class GraphNode;
++
++class ChatLogic
++{
++private:
++    //// STUDENT CODE
++    ////
++
++    // data handles (owned)
++    std::vector<GraphNode *> _nodes;
++    std::vector<GraphEdge *> _edges;
++
++    ////
++    //// EOF STUDENT CODE
++
++    // data handles (not owned)
++    GraphNode *_currentNode;
++    ChatBot *_chatBot;
++    ChatBotPanelDialog *_panelDialog;
++
++    // proprietary type definitions
++    typedef std::vector<std::pair<std::string, std::string>> tokenlist;
++
++    // proprietary functions
++    template <typename T>
++    void AddAllTokensToElement(std::string tokenID, tokenlist &tokens, T &element);
++
++public:
++    // constructor / destructor
++    ChatLogic();
++    ~ChatLogic();
++
++    // getter / setter
++    void SetPanelDialogHandle(ChatBotPanelDialog *panelDialog);
++    void SetChatbotHandle(ChatBot *chatbot);
++
++    // proprietary functions
++    void LoadAnswerGraphFromFile(std::string filename);
++    void SendMessageToChatbot(std::string message);
++    void SendMessageToUser(std::string message);
++    wxBitmap *GetImageFromChatbot();
++};
++
++#endif /* CHATLOGIC_H_ */
+\ No newline at end of file
+diff --git a/src/graphedge.cpp b/src/graphedge.cpp
+new file mode 100644
+index 0000000..9c976e3
+--- /dev/null
++++ b/src/graphedge.cpp
+@@ -0,0 +1,22 @@
++#include "graphnode.h"
++#include "graphedge.h"
++
++GraphEdge::GraphEdge(int id)
++{
++    _id = id;
++}
++
++void GraphEdge::SetChildNode(GraphNode *childNode)
++{
++    _childNode = childNode;
++}
++
++void GraphEdge::SetParentNode(GraphNode *parentNode)
++{
++    _parentNode = parentNode;
++}
++
++void GraphEdge::AddToken(std::string token)
++{
++    _keywords.push_back(token);
++}
+\ No newline at end of file
+diff --git a/src/graphedge.h b/src/graphedge.h
+new file mode 100644
+index 0000000..16112bc
+--- /dev/null
++++ b/src/graphedge.h
+@@ -0,0 +1,36 @@
++#ifndef GRAPHEDGE_H_
++#define GRAPHEDGE_H_
++
++#include <vector>
++#include <string>
++
++class GraphNode; // forward declaration
++
++class GraphEdge
++{
++private:
++    // data handles (not owned)
++    GraphNode *_childNode;
++    GraphNode *_parentNode;
++
++    // proprietary members
++    int _id;
++    std::vector<std::string> _keywords; // list of topics associated with this edge
++    
++
++public:
++    // constructor / desctructor
++    GraphEdge(int id);
++
++    // getter / setter
++    int GetID() { return _id; }
++    void SetChildNode(GraphNode *childNode);
++    void SetParentNode(GraphNode *parentNode);
++    GraphNode *GetChildNode() { return _childNode; }
++    std::vector<std::string> GetKeywords() { return _keywords; }
++
++    // proprietary functions
++    void AddToken(std::string token);
++};
++
++#endif /* GRAPHEDGE_H_ */
+\ No newline at end of file
+diff --git a/src/graphnode.cpp b/src/graphnode.cpp
+new file mode 100644
+index 0000000..65f5606
+--- /dev/null
++++ b/src/graphnode.cpp
+@@ -0,0 +1,60 @@
++#include "graphedge.h"
++#include "graphnode.h"
++
++GraphNode::GraphNode(int id)
++{
++    _id = id;
++}
++
++GraphNode::~GraphNode()
++{
++    //// STUDENT CODE
++    ////
++
++    delete _chatBot; 
++
++    ////
++    //// EOF STUDENT CODE
++}
++
++void GraphNode::AddToken(std::string token)
++{
++    _answers.push_back(token);
++}
++
++void GraphNode::AddEdgeToParentNode(GraphEdge *edge)
++{
++    _parentEdges.push_back(edge);
++}
++
++void GraphNode::AddEdgeToChildNode(GraphEdge *edge)
++{
++    _childEdges.push_back(edge);
++}
++
++//// STUDENT CODE
++////
++void GraphNode::MoveChatbotHere(ChatBot *chatbot)
++{
++    _chatBot = chatbot;
++    _chatBot->SetCurrentNode(this);
++}
++
++void GraphNode::MoveChatbotToNewNode(GraphNode *newNode)
++{
++    newNode->MoveChatbotHere(_chatBot);
++    _chatBot = nullptr; // invalidate pointer at source
++}
++////
++//// EOF STUDENT CODE
++
++GraphEdge *GraphNode::GetChildEdgeAtIndex(int index)
++{
++    //// STUDENT CODE
++    ////
++
++    return _childEdges[index];
++
++    ////
++    //// EOF STUDENT CODE
++}
+\ No newline at end of file
+diff --git a/src/graphnode.h b/src/graphnode.h
+new file mode 100644
+index 0000000..ba3910d
+--- /dev/null
++++ b/src/graphnode.h
+@@ -0,0 +1,60 @@
++#ifndef GRAPHNODE_H_
++#define GRAPHNODE_H_
++
++#include <vector>
++#include <string>
++#include "chatbot.h"
++
++
++// forward declarations
++class GraphEdge;
++
++class GraphNode
++{
++private:
++    //// STUDENT CODE
++    ////
++
++    // data handles (owned)
++    std::vector<GraphEdge *> _childEdges;  // edges to subsequent nodes
++
++    // data handles (not owned)
++    std::vector<GraphEdge *> _parentEdges; // edges to preceding nodes 
++    ChatBot *_chatBot;
++
++    ////
++    //// EOF STUDENT CODE
++
++    // proprietary members
++    int _id;
++    std::vector<std::string> _answers;
++
++public:
++    // constructor / destructor
++    GraphNode(int id);
++    ~GraphNode();
++
++    // getter / setter
++    int GetID() { return _id; }
++    int GetNumberOfChildEdges() { return _childEdges.size(); }
++    GraphEdge *GetChildEdgeAtIndex(int index);
++    std::vector<std::string> GetAnswers() { return _answers; }
++    int GetNumberOfParents() { return _parentEdges.size(); }
++
++    // proprietary functions
++    void AddToken(std::string token); // add answers to list
++    void AddEdgeToParentNode(GraphEdge *edge);
++    void AddEdgeToChildNode(GraphEdge *edge);
++
++    //// STUDENT CODE
++    ////
++
++    void MoveChatbotHere(ChatBot *chatbot);
++
++    ////
++    //// EOF STUDENT CODE
++
++    void MoveChatbotToNewNode(GraphNode *newNode);
++};
++
++#endif /* GRAPHNODE_H_ */
+\ No newline at end of file
