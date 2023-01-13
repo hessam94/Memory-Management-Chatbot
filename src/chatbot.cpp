@@ -54,8 +54,9 @@ ChatBot::ChatBot(ChatBot &source)
      //*_rootNode = *source._rootNode;
      _rootNode = source._rootNode;
 
-     _image = new wxBitmap();
-     *_image = *source._image;
+    //  _image = new wxBitmap();
+    //  *_image = *source._image;
+     _image = new wxBitmap(*source._image);
 
      //_chatLogic = new ChatLogic();
      //*_chatLogic = *source._chatLogic;
@@ -77,8 +78,10 @@ ChatBot ChatBot::operator=(ChatBot &source)
     //  *_rootNode = *source._rootNode;
      _rootNode = source._rootNode;
 
-     _image = new wxBitmap();
-     *_image = *source._image;
+    //  _image = new wxBitmap();
+    //  *_image = *source._image;
+    delete _image;
+      _image = new wxBitmap(*source._image);
 
     // _chatLogic = new ChatLogic();
     // *_chatLogic = *source._chatLogic;
@@ -167,6 +170,7 @@ void ChatBot::SetCurrentNode(GraphNode *node)
     std::string answer = answers.at(dis(generator));
 
     // send selected node answer to user
+     _chatLogic->SetChatbotHandle(this);
     _chatLogic->SendMessageToUser(answer);
 }
 
