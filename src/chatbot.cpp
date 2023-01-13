@@ -46,11 +46,13 @@ ChatBot::~ChatBot()
 ////
 ChatBot::ChatBot(ChatBot &source)
 {
-     _currentNode = new GraphNode(source._currentNode->GetID());
-     *_currentNode = *source._currentNode;
+    //  _currentNode = new GraphNode(source._currentNode->GetID());
+    //  *_currentNode = *source._currentNode;
+     _currentNode = source._currentNode;
 
-     _rootNode = new GraphNode(source._rootNode->GetID());
-     *_rootNode = *source._rootNode;
+     //_rootNode = new GraphNode(source._rootNode->GetID());
+     //*_rootNode = *source._rootNode;
+     _rootNode = source._rootNode;
 
      _image = new wxBitmap();
      *_image = *source._image;
@@ -67,11 +69,13 @@ ChatBot ChatBot::operator=(ChatBot &source)
 {
      if (this == &source)
          return *this;
-     _currentNode = new GraphNode(source._currentNode->GetID());
-     *_currentNode = *source._currentNode;
+     //_currentNode = new GraphNode(source._currentNode->GetID());
+     //*_currentNode = *source._currentNode;
+     _currentNode = source._currentNode;
 
-     _rootNode = new GraphNode(source._rootNode->GetID());
-     *_rootNode = *source._rootNode;
+    //  _rootNode = new GraphNode(source._rootNode->GetID());
+    //  *_rootNode = *source._rootNode;
+     _rootNode = source._rootNode;
 
      _image = new wxBitmap();
      *_image = *source._image;
