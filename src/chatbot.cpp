@@ -42,53 +42,27 @@ ChatBot::~ChatBot()
     }
 }
 
-//// STUDENT CODE
-////
 ChatBot::ChatBot(ChatBot &source)
 {
-    //  _currentNode = new GraphNode(source._currentNode->GetID());
-    //  *_currentNode = *source._currentNode;
-     _currentNode = source._currentNode;
-
-     //_rootNode = new GraphNode(source._rootNode->GetID());
-     //*_rootNode = *source._rootNode;
-     _rootNode = source._rootNode;
-
-    //  _image = new wxBitmap();
-    //  *_image = *source._image;
-     _image = new wxBitmap(*source._image);
-
-     //_chatLogic = new ChatLogic();
-     //*_chatLogic = *source._chatLogic;
-
+    _currentNode = source._currentNode;
+    _rootNode = source._rootNode;
+    _image = new wxBitmap(*source._image);
     _chatLogic = source._chatLogic;
-
     std::cout << "COPYING content of instance " << &source << " to instance " << this << std::endl;
 }
 
 ChatBot ChatBot::operator=(ChatBot &source)
 {
-     if (this == &source)
-         return *this;
-     //_currentNode = new GraphNode(source._currentNode->GetID());
-     //*_currentNode = *source._currentNode;
-     _currentNode = source._currentNode;
+    if (this == &source)
+        return *this;
+    _currentNode = source._currentNode;
+    _rootNode = source._rootNode;
 
-    //  _rootNode = new GraphNode(source._rootNode->GetID());
-    //  *_rootNode = *source._rootNode;
-     _rootNode = source._rootNode;
-
-    //  _image = new wxBitmap();
-    //  *_image = *source._image;
     delete _image;
-      _image = new wxBitmap(*source._image);
-
-    // _chatLogic = new ChatLogic();
-    // *_chatLogic = *source._chatLogic;
+    _image = new wxBitmap(*source._image);
 
     _chatLogic = source._chatLogic;
     return *this;
-
 }
 
 ChatBot::ChatBot(ChatBot &&source)
@@ -119,9 +93,6 @@ ChatBot ChatBot::operator=(ChatBot &&source)
     source._chatLogic = nullptr;
     return *this;
 }
-
-////
-//// EOF STUDENT CODE
 
 void ChatBot::ReceiveMessageFromUser(std::string message)
 {
@@ -170,7 +141,7 @@ void ChatBot::SetCurrentNode(GraphNode *node)
     std::string answer = answers.at(dis(generator));
 
     // send selected node answer to user
-     _chatLogic->SetChatbotHandle(this);
+    _chatLogic->SetChatbotHandle(this);
     _chatLogic->SendMessageToUser(answer);
 }
 
